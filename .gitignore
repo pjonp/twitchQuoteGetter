@@ -1,0 +1,5 @@
+/node_modules
+.hidden/settings.json
+.gitattributes
+package-lock.json
+quoteDatabase.json
