@@ -8,6 +8,9 @@ let gettingQuotes = false,
   quoteData = [],
   noQuote = 0;
 
+  SETTINGS.SEBOT = SETTINGS.SEBOT.toLowerCase();
+  SETTINGS.CHANNELNAME = SETTINGS.CHANNELNAME.toLowerCase();
+
 //START TWITCH
 const TWITCHBOT = new Twitch.client({
   options: {
@@ -17,10 +20,10 @@ const TWITCHBOT = new Twitch.client({
     reconnect: true
   },
   identity: {
-    username: SETTINGS.T_BOTUSERNAME,
-    password: `oauth:${SETTINGS.T_BOTOAUTHTOKEN}`
+    username: SETTINGS.CHANNELNAME,
+    password: `oauth:${SETTINGS.OAUTHTOKEN}`
   },
-  channels: [SETTINGS.T_CHANNELNAME]
+  channels: [SETTINGS.CHANNELNAME]
 });
 
 TWITCHBOT.connect().catch((err) => {
@@ -33,20 +36,18 @@ TWITCHBOT.on('connected', () => {
   }, 1500)
 });
 
-
 TWITCHBOT.on('message', (room, user, message, self) => {
-  if (message.toLowerCase().startsWith(`@${SETTINGS.T_BOTUSERNAME}, no quote found`) || message === '!stop') {
-    if (message === '!stop' && user.username === SETTINGS.T_CHANNELNAME) {
+  if (message.toLowerCase().startsWith(`@${SETTINGS.CHANNELNAME}, no quote found`) || message === '!stop') {
+    if (message === '!stop' && user.username === SETTINGS.CHANNELNAME) {
       quit();
     } else {
       noQuote++
       if(noQuote > 2) quit();
     };
-  } else if (gettingQuotes) {
-    if (user.username == SETTINGS.T_BOTUSERNAME || user.username == 'streamelements') {
-      if (message.startsWith(`@${SETTINGS.T_BOTUSERNAME}, #`)) {
+  } else if (gettingQuotes || user.username == SETTINGS.SEBOT) {
+      if (message.startsWith(`@${SETTINGS.CHANNELNAME}, #`)) {
         let index = message.indexOf(":"),
-          qnum = message.slice(0, index).replace(`@${SETTINGS.T_BOTUSERNAME}, #`, ''),
+          qnum = message.slice(0, index).replace(`@${SETTINGS.CHANNELNAME}, #`, ''),
           qtext = message.slice(index + 1).trim(),
           quoteObj = {
             "id": qnum,
@@ -55,8 +56,7 @@ TWITCHBOT.on('message', (room, user, message, self) => {
         quoteData.push(quoteObj);
         noQuote = 0;
       };
-    };
-  } else if (user.username === SETTINGS.T_CHANNELNAME && message.startsWith('!allthequotes')) {
+  } else if (user.username === SETTINGS.CHANNELNAME && message.startsWith('!allthequotes')) {
     let startingQuote = parseInt(message.split(' ')[1])
     gettingQuotes = true;
     quoteLoop(startingQuote || 1, room);

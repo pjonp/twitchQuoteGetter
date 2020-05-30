@@ -1,5 +1,5 @@
 {
-  "T_BOTUSERNAME": "bot_username",
-  "T_BOTOAUTHTOKEN": "bot_OauthToken",
-  "T_CHANNELNAME": "your_username"
+  "CHANNELNAME": "yourtwitchname",
+  "OAUTHTOKEN": "see README for info",
+  "SEBOT": "streamelements"
 }
